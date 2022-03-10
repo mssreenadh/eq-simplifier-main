@@ -77,7 +77,7 @@ class Node:
         "List the nodes reachable in one step from this node."
         #print problem.actions(self.state).values()
         return [self.child_node(problem, action)
-                for action in problem.actions(self.state).values()]
+                for action in list(problem.actions(self.state).values())]
 
 
     def child_node(self, problem, action):
@@ -308,7 +308,7 @@ class equationSolver(Problem):
                 break
             elif not isSimplifiedSubTree(temp2):
                 hvalue+=2
-            elif temp2.children[0].type in ops.keys():
+            elif temp2.children[0].type in list(ops.keys()):
                 hvalue+=2
             temp2 = temp2.children[1]
         while (temp1.children != []):
@@ -316,7 +316,7 @@ class equationSolver(Problem):
                 break
             elif not isSimplifiedSubTree(temp1):
                 hvalue+=5
-            elif temp1.children[1].type in ops.keys():
+            elif temp1.children[1].type in list(ops.keys()):
                 hvalue+=5
             temp1 = temp1.children[0]
         return hvalue

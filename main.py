@@ -1,5 +1,3 @@
-__author__ = 'deep'
-
 import search
 import eqparser
 import helperfns
@@ -9,4 +7,4 @@ v=input("var>")
 p = eqparser.parse(s)
 pbm = search.equationSolver(initial=p,variable=v)
 
-print (pbm.astar_search(pbm))
+print(pbm.astar_search(pbm))

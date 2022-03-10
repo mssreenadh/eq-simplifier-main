@@ -1,4 +1,3 @@
-
 enable_colors = True 
 
 if enable_colors: 

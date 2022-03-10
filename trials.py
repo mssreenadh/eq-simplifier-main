@@ -1,4 +1,3 @@
-__author__ = 'deep'
 
 import eqparser
 from eqparser import Node as eqNode
@@ -13,8 +12,8 @@ arithtypes = ["INT", "FLOAT"]
 counter = 0
 
 
-s=raw_input("eq>")
-r=raw_input("eq2>")
+s=input("eq>")
+r=input("eq2>")
 p = eqparser.parse(s)
 p2=eqparser.parse(r)
 q = p.children[1]
@@ -52,10 +51,10 @@ def solveThis(x):
 
 def findPointer(x,c1,l,c2):
     if x.children != []:
-        if x.leaf in ops.keys() and x.leaf == l and x.children[0].leaf == c1 and x.children[1].leaf == c2:
+        if x.leaf in list(ops.keys()) and x.leaf == l and x.children[0].leaf == c1 and x.children[1].leaf == c2:
             return x
         else:
-            if x.leaf in ops.keys():
+            if x.leaf in list(ops.keys()):
                 y1 = findPointer(x.children[0], c1, l, c2)
                 y2 = findPointer(x.children[1], c1, l, c2)
                 if y1:
@@ -88,7 +87,7 @@ def simplify(temp,c1,l,c2):
 def inverseIdentity(temp, c1, l, c2):
     temp2 = temp
     x = findPointer(temp, c1, l, c2)
-    print repr(x)
+    print(repr(x))
     rleaf = lleaf = temp
     if x.leaf == "*":
         x.leaf = "/"
@@ -133,7 +132,7 @@ def makeCopy(x):
     copyNode = eqNode("EQUALS",children=None,leaf="=")
     if x.leaf in specials:
         copyNode = eqNode(x.type, children=[x.children],leaf=x.leaf)
-    elif x.leaf in ops.keys():
+    elif x.leaf in list(ops.keys()):
         copyNode = eqNode(x.type, children=[makeCopy(x.children[0]),makeCopy(x.children[1])],leaf=x.leaf)
     else:
         copyNode = eqNode(x.type, children=None, leaf=x.leaf)
@@ -147,22 +146,22 @@ def actions(x):
             if  x.leaf == '=' and x.children[0].leaf == "sqrt" and x.children[0].children.leaf == self.variable :
                 acts[counter] = [squarIt,makeCopy(currentstate),self.variable]
                 counter+=1
-                acts = dict(acts.items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.leaf == '=' and x.children[0].leaf == "log" and x.children[0].children.leaf == self.variable:
                 acts[counter] = [unLogIt,makeCopy(currentstate),self.variable]
                 counter+=1
-                acts = dict(acts.items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.leaf == '=' and x.children[0].leaf == "ln" and x.children[0].children.leaf == self.variable:
                 acts[counter] = [unLnIt(),makeCopy(currentstate),self.variable]
                 counter+=1
-                acts = dict(acts.items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.children[0].children != [] and x.children[1].children == [] and (x.leaf == "+" or x.leaf == "-"):
                 acts[counter] = [inverseIdentity,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
                 counter+=1
-                acts = dict(acts.items() + actions(x.children[0]).items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[0]).items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.children[0].children == [] and x.children[1].children != [] and (x.leaf == "+" or x.leaf == "-"):
                 acts[counter] = [inverseIdentity,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
@@ -170,7 +169,7 @@ def actions(x):
                 if x.leaf == '+':
                     acts[counter] = [commutative,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
                     counter+=1
-                acts = dict(acts.items() + actions(x.children[0]).items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[0]).items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.leaf == "+" or x.leaf == "*":
                 acts[counter] = [simplify,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
@@ -189,7 +188,7 @@ def actions(x):
                 elif x.children[0].type in ["VARIABLENAME", "SYMBOL"] and x.children[1].leaf.type in ["VARIABLENAME", "SYMBOL"]:
                     acts[counter] = [commutative,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
                     counter+=1
-                acts = dict(acts.items() + actions(x.children[0]).items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[0]).items()) + list(actions(x.children[1]).items()))
                 return acts
             elif x.leaf == "-" or x.leaf == "/" or x.leaf == "^":
                 acts[counter] = [simplify,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
@@ -200,12 +199,12 @@ def actions(x):
                 elif x.children[0].type in ["VARIABLENAME", "SYMBOL"] and x.children[1].leaf.type in ["VARIABLENAME", "SYMBOL"]:
                     acts[counter] = [inverseIdentity,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
                     counter+=1
-                acts = dict(acts.items() + actions(x.children[0]).items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[0]).items()) + list(actions(x.children[1]).items()))
                 return acts
             else:
                 acts[counter] = [simplify,makeCopy(currentstate),x.children[0].leaf,x.leaf,x.children[1].leaf]
                 counter+=1
-                acts = dict(acts.items() + actions(x.children[0]).items() + actions(x.children[1]).items())
+                acts = dict(list(acts.items()) + list(actions(x.children[0]).items()) + list(actions(x.children[1]).items()))
                 return acts
         else:
             return {}
@@ -227,10 +226,10 @@ def goal_test(state):
 def isSimplified(x, v):
     if ifIdentityLeft(x):
         return False
-    if x.children != [] and x.leaf in ops.keys()  and x.leaf != '='  and (x.children[0].leaf == v or x.children[1].leaf == v):
+    if x.children != [] and x.leaf in list(ops.keys())  and x.leaf != '='  and (x.children[0].leaf == v or x.children[1].leaf == v):
         return False
-    elif x.children != [] and x.leaf in ops.keys():
-        if x.children[0].leaf not in ops.keys() and x.children[1].leaf not in ops.keys():
+    elif x.children != [] and x.leaf in list(ops.keys()):
+        if x.children[0].leaf not in list(ops.keys()) and x.children[1].leaf not in list(ops.keys()):
             if (x.children[0].leaf in specials and x.children[1].leaf in specials) or\
                     (x.children[0].leaf in specials and x.children[1].type in arithtypes) or\
                     (x.children[0].leaf in specials and x.children[1].type in ["VARIABLENAME", "SYMBOL"]) or\
@@ -253,13 +252,13 @@ def isSimplified(x, v):
             elif x.children[0].leaf not in specials and x.children[1].leaf not in specials:
                 left = isSimplified(x.children[0], v)
                 right = isSimplified(x.children[1], v)
-        elif x.children[0].leaf not in ops.keys() and x.children[1].leaf in ops.keys():
+        elif x.children[0].leaf not in list(ops.keys()) and x.children[1].leaf in list(ops.keys()):
             left = True
             right = isSimplified(x.children[1], v)
-        elif x.children[0].leaf in ops.keys() and x.children[1].leaf not in ops.keys():
+        elif x.children[0].leaf in list(ops.keys()) and x.children[1].leaf not in list(ops.keys()):
             left = isSimplified(x.children[0], v)
             right = True
-        elif x.children[0].leaf in ops.keys() and x.children[1].leaf in ops.keys():
+        elif x.children[0].leaf in list(ops.keys()) and x.children[1].leaf in list(ops.keys()):
             left = isSimplified(x.children[0], v)
             right = isSimplified(x.children[1], v)
         return (left and right)
@@ -270,14 +269,14 @@ def h(x):
     lops = 0
     rops = 0
     temp = x.children[0]
-    while(temp.leaf in ops.keys()):
-        if temp.children[0] in specials or temp.children[0] in ops.keys() or temp.children[1] in specials or temp.children[1] in ops.keys() \
+    while(temp.leaf in list(ops.keys())):
+        if temp.children[0] in specials or temp.children[0] in list(ops.keys()) or temp.children[1] in specials or temp.children[1] in list(ops.keys()) \
                 or temp.children[0].type in ["VARIABLENAME", "SYMBOL"] or temp.children[1].type in ["VARIABLENAME", "SYMBOL"]:
             lops+=1
         temp = temp.children[0]
     temp = x.children[1]
-    while(temp.leaf in ops.keys()):
-        if temp.children[0] in specials or temp.children[0] in ops.keys() or temp.children[1] in specials or temp.children[1] in ops.keys() \
+    while(temp.leaf in list(ops.keys())):
+        if temp.children[0] in specials or temp.children[0] in list(ops.keys()) or temp.children[1] in specials or temp.children[1] in list(ops.keys()) \
                 or temp.children[0].type in ["VARIABLENAME", "SYMBOL"] or temp.children[1].type in ["VARIABLENAME", "SYMBOL"]:
             rops+=1
         temp = temp.children[1]
@@ -295,29 +294,29 @@ def newActions(x):
             if x.leaf == "*" and x.children[0].type in arithtypes and x.children[1].type in arithtypes:
                 acts[counter] = [commutative,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
                 counter+=1
-            acts = dict(acts.items() + newActions(x.children[0]).items() + newActions(x.children[1]).items())
+            acts = dict(list(acts.items()) + list(newActions(x.children[0]).items()) + list(newActions(x.children[1]).items()))
             return acts
         elif x.children[0].children != [] and x.children[1].children == [] and (x.leaf == "+" or x.leaf == "-"):
             acts[counter] = [inverseIdentity,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
             counter+=1
-            acts = dict(acts.items() + newActions(x.children[0]).items() + newActions(x.children[1]).items())
+            acts = dict(list(acts.items()) + list(newActions(x.children[0]).items()) + list(newActions(x.children[1]).items()))
             return acts
         elif x.children[0].children == [] and x.children[1].children != [] and (x.leaf == "+" or x.leaf == "-"):
             acts[counter] = [inverseIdentity,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
             counter+=1
-            acts = dict(acts.items() + newActions(x.children[0]).items() + newActions(x.children[1]).items())
+            acts = dict(list(acts.items()) + list(newActions(x.children[0]).items()) + list(newActions(x.children[1]).items()))
             return acts
         elif x.leaf == "+" or x.leaf == "*":
             acts[counter] = [simplify,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
             counter+=1
             acts[counter] = [commutative,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
             counter+=1
-            acts = dict(acts.items() + newActions(x.children[0]).items() + newActions(x.children[1]).items())
+            acts = dict(list(acts.items()) + list(newActions(x.children[0]).items()) + list(newActions(x.children[1]).items()))
             return acts
         else:
             acts[counter] = [simplify,makeCopy(currentState),x.children[0].leaf,x.leaf,x.children[1].leaf]
             counter+=1
-            acts = dict(acts.items() + newActions(x.children[0]).items() + newActions(x.children[1]).items())
+            acts = dict(list(acts.items()) + list(newActions(x.children[0]).items()) + list(newActions(x.children[1]).items()))
             return acts
     else:
         return {}
@@ -344,7 +343,7 @@ def unLnIt(x):
     return temp
 
 def findOperations(x):
-    if x.children != [] and x.leaf in ops.keys():
+    if x.children != [] and x.leaf in list(ops.keys()):
         if x.leaf == '=':
             return findOperations(x.children[0]) + findOperations(x.children[1])
         else:
@@ -413,9 +412,9 @@ def ifIdentityLeft(x):
     elif x.children == []:
         return 0
 
-print p.children[1].children[0].type
-print repr(p)
-print isSimplified(p,'x')
+print(p.children[1].children[0].type)
+print(repr(p))
+print(isSimplified(p,'x'))
 #print ifIdentityLeft(p)
 #print findDepthOfX(p.children[0], 'x')
 #print actions(p)

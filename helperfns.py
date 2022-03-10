@@ -1,4 +1,3 @@
-__author__ = 'deep'
 
 # Function to do arithmetic operations for more than one levels
 import eqparser
@@ -113,7 +112,7 @@ def makeCopy(x):
     copyNode = eqNode("EQUALS",children=None,leaf="=")
     if x.leaf in specials:
         copyNode = eqNode(x.type, children=x.children,leaf=x.leaf)
-    elif x.leaf in ops.keys():
+    elif x.leaf in list(ops.keys()):
         copyNode = eqNode(x.type, children=[makeCopy(x.children[0]),makeCopy(x.children[1])],leaf=x.leaf)
     else:
         copyNode = eqNode(x.type, children=None, leaf=x.leaf)
@@ -123,10 +122,10 @@ def makeCopy(x):
 
 def findPointer(x,c1,l,c2):
     if x.children != []:
-        if x.leaf in ops.keys() and x.leaf == l and x.children[0].leaf == c1 and x.children[1].leaf == c2:
+        if x.leaf in list(ops.keys()) and x.leaf == l and x.children[0].leaf == c1 and x.children[1].leaf == c2:
             return x
         else:
-            if x.leaf in ops.keys():
+            if x.leaf in list(ops.keys()):
                 y1 = findPointer(x.children[0], c1, l, c2)
                 y2 = findPointer(x.children[1], c1, l, c2)
                 if y1:
@@ -140,10 +139,10 @@ def findPointer(x,c1,l,c2):
 def isSimplified(x, v):
     if ifIdentityLeft(x):
         return False
-    if x.children != [] and x.leaf in ops.keys()  and x.leaf != '='  and (x.children[0].leaf == v or x.children[1].leaf == v):
+    if x.children != [] and x.leaf in list(ops.keys())  and x.leaf != '='  and (x.children[0].leaf == v or x.children[1].leaf == v):
         return False
-    elif x.children != [] and x.leaf in ops.keys():
-        if x.children[0].leaf not in ops.keys() and x.children[1].leaf not in ops.keys():
+    elif x.children != [] and x.leaf in list(ops.keys()):
+        if x.children[0].leaf not in list(ops.keys()) and x.children[1].leaf not in list(ops.keys()):
             if (x.children[0].leaf in specials and x.children[1].leaf in specials) or\
                     (x.children[0].leaf in specials and x.children[1].type in arithtypes) or\
                     (x.children[0].leaf in specials and x.children[1].type in ["VARIABLENAME", "SYMBOL"]) or\
@@ -166,13 +165,13 @@ def isSimplified(x, v):
             elif x.children[0].leaf not in specials and x.children[1].leaf not in specials:
                 left = isSimplified(x.children[0], v)
                 right = isSimplified(x.children[1], v)
-        elif x.children[0].leaf not in ops.keys() and x.children[1].leaf in ops.keys():
+        elif x.children[0].leaf not in list(ops.keys()) and x.children[1].leaf in list(ops.keys()):
             left = True
             right = isSimplified(x.children[1], v)
-        elif x.children[0].leaf in ops.keys() and x.children[1].leaf not in ops.keys():
+        elif x.children[0].leaf in list(ops.keys()) and x.children[1].leaf not in list(ops.keys()):
             left = isSimplified(x.children[0], v)
             right = True
-        elif x.children[0].leaf in ops.keys() and x.children[1].leaf in ops.keys():
+        elif x.children[0].leaf in list(ops.keys()) and x.children[1].leaf in list(ops.keys()):
             left = isSimplified(x.children[0], v)
             right = isSimplified(x.children[1], v)
         return (left and right)
@@ -184,7 +183,7 @@ def isSimplified(x, v):
 def isSimplifiedSubTree(x):
     if x.leaf in specials:
         return True
-    elif x.leaf in ops.keys():
+    elif x.leaf in list(ops.keys()):
         if x.children[0].type in arithtypes and x.children[1].type in specials:
             return True
         elif x.children[0].type in arithtypes and x.children[1].type in arithtypes:
@@ -248,7 +247,7 @@ def unLnIt(x, v):
 # Function to find out number of operations left in equation
 
 def findOperations(x):
-    if x.children != [] and x.leaf in ops.keys():
+    if x.children != [] and x.leaf in list(ops.keys()):
         if x.leaf == '=' and x.leaf not in specials:
             return findOperations(x.children[0]) + findOperations(x.children[1])
         else:

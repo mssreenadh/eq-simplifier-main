@@ -81,7 +81,7 @@ def t_newline(t):
     t.lexer.lineno += t.value.count("\n")
     
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    print(("Illegal character '%s'" % t.value[0]))
     t.lexer.skip(1)
     
 # Build the lexer
@@ -210,7 +210,7 @@ def p_expression_symbol(p):
 
 def p_error(p):
     try:
-        print("Syntax error at '%s'" % p.value)
+        print(("Syntax error at '%s'" % p.value))
     except:  
         print("Syntax error. An equation is expected.")
 
